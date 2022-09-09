@@ -34,7 +34,12 @@ struct TranslationView: View {
                 
                 Button("Translate!", action: translate).padding()
             }
+            .navigationTitle("Translator")
+            .task {
+                await viewModel.fetchLanguagesAsynchronously()
+            }
         }
+        .navigationViewStyle(.stack)
     }
     
     func translate() {
