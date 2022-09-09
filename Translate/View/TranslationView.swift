@@ -8,6 +8,7 @@ struct TranslationView: View {
     @StateObject private var viewModel = TranslationViewModel()
     
     var body: some View {
+        
         NavigationView {
             VStack {
                 List {

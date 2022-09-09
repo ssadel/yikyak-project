@@ -98,10 +98,10 @@
 		2CB6F551284988D2003A6EA5 /* Translate */ = {
 			isa = PBXGroup;
 			children = (
+				2CB6F552284988D2003A6EA5 /* TranslateApp.swift */,
+				2CB6F5832849A1BD003A6EA5 /* ViewModel */,
 				2CB6F57C28499EE3003A6EA5 /* Model */,
 				2CB6F5822849A182003A6EA5 /* View */,
-				2CB6F5832849A1BD003A6EA5 /* ViewModel */,
-				2CB6F552284988D2003A6EA5 /* TranslateApp.swift */,
 				2CB6F556284988D3003A6EA5 /* Assets.xcassets */,
 				2CB6F558284988D3003A6EA5 /* Preview Content */,
 			);
