@@ -13,10 +13,12 @@ struct TranslationView: View {
             VStack {
                 List {
                     Section(header: Text("Original")) {
-                        TextField("Input text to translate", text: $inputText).padding()
+                        TextField("Input text to translate", text: $inputText)
+                            .padding()
                     }
                     Section(header: Text("Translated")) {
-                        Text(viewModel.translatedText).padding()
+                        Text(viewModel.translatedText)
+                            .padding()
                     }
                     Section {
                         if viewModel.languages.count > 0 {
@@ -32,19 +34,26 @@ struct TranslationView: View {
                     }
                 }.listStyle(InsetGroupedListStyle())
                 
-                Button("Translate!", action: translate).padding()
+                Button {
+                    viewModel.translate(inputText: inputText, selectedLanguage: selectedLanguage)
+                    dismissKeyboard()
+                } label: {
+                    Text("Translate!")
+                }
+                .buttonStyle(.bordered)
+                .padding()
+                
             }
             .navigationTitle("Translator")
             .task {
-                await viewModel.fetchLanguagesAsynchronously()
+                await viewModel.fetchLanguages()
             }
         }
         .navigationViewStyle(.stack)
     }
     
-    func translate() {
-        print("Not implemented")
-        // TODO: you will need to implement this
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
 

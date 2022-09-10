@@ -8,29 +8,9 @@ class TranslationViewModel: ObservableObject {
     
     init() {
         print("TranslationViewModel init")
-        //fetchLanguages()
     }
     
-    func fetchLanguages() {
-        guard let url = URL(string: "https://libretranslate.com/languages") else { return }
-        let task = URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-            if error == nil {
-                if let data = data {
-                    do {
-                        let languages = try JSONDecoder().decode([Language].self, from: data)
-                        DispatchQueue.main.async {
-                            self?.languages = languages
-                        }
-                    } catch {
-                        print(error)
-                    }
-                }
-            }
-        }
-        task.resume()
-    }
-    
-    func fetchLanguagesAsynchronously() async {
+    func fetchLanguages() async {
         guard let url = URL(string: "https://libretranslate.com/languages") else { return }
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
@@ -43,6 +23,41 @@ class TranslationViewModel: ObservableObject {
         } catch {
             print("--> there was an error decoding the response: ", error)
         }
+    }
+    
+    func translate(inputText:String, selectedLanguage:Language) {
+        guard let url = URL(string: "https://libretranslate.de/") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        let body: [String: AnyHashable] = [
+            "q": inputText,
+            "source": sourceLanguage.id,
+            "target": selectedLanguage.id
+        ]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: .fragmentsAllowed)
+        
+        print(request.description)
+        
+        let task = URLSession.shared.dataTask(with: request) { data, _, error in
+            
+            guard let data = data, error == nil else {
+                return
+            }
+            
+            do {
+                let response = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+                print(response)
+            } catch {
+                print("error: ", error)
+            }
+            
+        }
+        
+        task.resume()
+        
+        //https://libretranslate.de/?q=\(inputText)&source=\(sourceLanguage.id)&target=\(selectedLanguage.id)
     }
     
 }
