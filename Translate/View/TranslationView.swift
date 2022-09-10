@@ -29,10 +29,12 @@ struct TranslationView: View {
                             }
                         }
                         else {
-                            Text("Loading languages...").padding()
+                            Text("Loading languages...")
+                                .padding()
                         }
                     }
-                }.listStyle(InsetGroupedListStyle())
+                }
+                .listStyle(InsetGroupedListStyle())
                 
                 Button {
                     viewModel.translate(inputText: inputText, selectedLanguage: selectedLanguage)
@@ -50,6 +52,16 @@ struct TranslationView: View {
             }
         }
         .navigationViewStyle(.stack)
+        .disabled(viewModel.languages.count == 0)
+        .brightness(viewModel.languages.count == 0 ? -0.3 : 0.0)
+        .overlay(
+            ProgressView()
+                .padding()
+                .background(.mint.opacity(0.5))
+                .cornerRadius(20)
+                .opacity(viewModel.languages.count == 0 ? 1.0 : 0.0)
+        )
+        .animation(.spring(), value: viewModel.translatedText)
     }
     
     private func dismissKeyboard() {

@@ -26,20 +26,12 @@ class TranslationViewModel: ObservableObject {
     }
     
     func translate(inputText:String, selectedLanguage:Language) {
-        guard let url = URL(string: "https://libretranslate.de/") else { return }
+        guard let url = URL(string: "https://libretranslate.de/translate?q=\(inputText)&source=\(sourceLanguage.id)&target=\(selectedLanguage.id)") else { return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        let body: [String: AnyHashable] = [
-            "q": inputText,
-            "source": sourceLanguage.id,
-            "target": selectedLanguage.id
-        ]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: .fragmentsAllowed)
-        
-        print(request.description)
-        
+
         let task = URLSession.shared.dataTask(with: request) { data, _, error in
             
             guard let data = data, error == nil else {
@@ -47,8 +39,10 @@ class TranslationViewModel: ObservableObject {
             }
             
             do {
-                let response = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-                print(response)
+                let resp = try JSONDecoder().decode(Response.self, from: data)
+                DispatchQueue.main.async {
+                    self.translatedText = resp.translatedText
+                }
             } catch {
                 print("error: ", error)
             }
@@ -56,8 +50,6 @@ class TranslationViewModel: ObservableObject {
         }
         
         task.resume()
-        
-        //https://libretranslate.de/?q=\(inputText)&source=\(sourceLanguage.id)&target=\(selectedLanguage.id)
     }
     
 }
